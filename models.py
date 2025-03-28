@@ -50,7 +50,7 @@ class Ride(models.Model):
     route = models.LineStringField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'ride'
 
     def assign_driver(self, driver):
