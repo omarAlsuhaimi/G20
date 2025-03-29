@@ -1,13 +1,6 @@
 from django.db import models
 
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
-from django.db import models
+
 from django.contrib.gis.db import models
 
 
@@ -21,7 +14,7 @@ class Driver(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
     vehicle = models.ForeignKey('Vehicle', models.DO_NOTHING, blank=True, null=True)
-    current_location = models.PointField()  # This field type is a guess.
+    current_location = models.PointField()
 
     class Meta:
         managed = False
@@ -86,7 +79,7 @@ class SpatialRefSys(models.Model):
 
 class Suitabledriver(models.Model):
     ride = models.OneToOneField(Ride, models.DO_NOTHING,
-                                primary_key=True)  # The composite primary key (ride_id, driver_id) found, that is not supported. The first column is selected.
+                                primary_key=True)
     driver = models.ForeignKey(Driver, models.DO_NOTHING)
     response = models.BooleanField()
 
@@ -103,7 +96,7 @@ class Surgearea(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     radius = models.FloatField()
     multiplier = models.DecimalField(max_digits=5, decimal_places=2)
-    location = models.PointField()  # This field type is a guess.
+    location = models.PointField()
 
     class Meta:
         managed = False

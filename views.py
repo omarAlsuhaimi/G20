@@ -13,9 +13,7 @@ class RideViewSet(viewsets.ModelViewSet):
     queryset = Ride.objects.all()
     serializer_class = RideSerializer
 
-    # -----------------------------------------
-    # 🚗 Ride Request Endpoint
-    # -----------------------------------------
+
     @action(detail=False, methods=['post'], url_path='request')
     def request_ride(self, request):
         try:
@@ -26,14 +24,13 @@ class RideViewSet(viewsets.ModelViewSet):
             rider_id = int(request.data['rider_id'])
             type_str = request.data.get('type')
 
-            # Create pickup and dropoff Points
+
             pickup = Point(lng1, lat1, srid=4326)
             dropoff = Point(lng2, lat2, srid=4326)
 
-            # 💡 Calculate distance between pickup and dropoff in km
-            distance_km = round(pickup.distance(dropoff) * 100, 2)  # Approximate (1 deg ≈ 100 km)
+            distance_km = round(pickup.distance(dropoff) * 100, 2)
 
-            # 🌀 Detect surge area
+
             surge_areas = Surgearea.objects.annotate(
                 surge_geom=Func(
                     F('longitude'),
@@ -54,14 +51,14 @@ class RideViewSet(viewsets.ModelViewSet):
             detected_surge = surge_areas.first()
             surge_multiplier = float(detected_surge.multiplier) if detected_surge else 1.0
 
-            # 🚘 Get vehicle type multiplier
+
             vehicle_type = Typemultiplier.objects.get(type=type_str)
             type_multiplier = float(vehicle_type.multiplier)
             rate_per_hour= 37.88
-            # 💰 Price = distance × surge × type
+
             price = round(((distance_km/40)*rate_per_hour) * surge_multiplier * type_multiplier, 2)
 
-            # 🛒 Create the ride
+
             ride = Ride.objects.create(
                 rider_id=rider_id,
                 pickup_location=pickup,
@@ -77,16 +74,13 @@ class RideViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    # -----------------------------------------
-    # ✅ Accept Ride Endpoint
-    # -----------------------------------------
+
     @action(detail=True, methods=['post'], url_path='accept')
     def accept_ride(self, request, pk=None):
         try:
             driver_id = int(request.data['driver_id'])
 
             with transaction.atomic():
-                # Lock row to prevent race conditions
                 ride = Ride.objects.select_for_update().get(pk=pk)
                 if ride.status != 'pending':
                     raise Exception("Ride is already accepted or completed.")

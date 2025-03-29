@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'rideapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'pg_postgis',  # Your database name
-        'USER': 'python_user',  # Your database user
-        'PASSWORD': '12345',  # Your database password
-        'HOST': 'localhost',  # Set to empty string for localhost.
-        'PORT': '5432',  # Set to empty string for default.
+        'NAME': 'pg_postgis',
+        'USER': 'python_user',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
