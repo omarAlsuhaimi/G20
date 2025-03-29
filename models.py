@@ -46,12 +46,7 @@ class Ride(models.Model):
         managed = True
         db_table = 'ride'
 
-    def assign_driver(self, driver):
-        if self.status != 'pending':
-            raise Exception("Ride is already accepted or completed.")
-        self.driver = driver
-        self.status = 'accepted'
-        self.save()
+  
 
 
 class Rider(models.Model):
